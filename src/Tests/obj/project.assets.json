@@ -5257,39 +5257,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\vase_\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/home/codespace/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\vase_\\Desktop\\AI\\Godset\\AIDA-M365\\src\\Tests\\AIDA.M365.Tests.csproj",
+      "projectUniqueName": "/workspaces/AIDA-M365/src/Tests/AIDA.M365.Tests.csproj",
       "projectName": "AIDA.M365.Tests",
-      "projectPath": "C:\\Users\\vase_\\Desktop\\AI\\Godset\\AIDA-M365\\src\\Tests\\AIDA.M365.Tests.csproj",
-      "packagesPath": "C:\\Users\\vase_\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\vase_\\Desktop\\AI\\Godset\\AIDA-M365\\src\\Tests\\obj\\",
+      "projectPath": "/workspaces/AIDA-M365/src/Tests/AIDA.M365.Tests.csproj",
+      "packagesPath": "/home/codespace/.nuget/packages/",
+      "outputPath": "/workspaces/AIDA-M365/src/Tests/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\vase_\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/codespace/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\vase_\\Desktop\\AI\\Godset\\AIDA-M365\\src\\AIDA.M365.csproj": {
-              "projectPath": "C:\\Users\\vase_\\Desktop\\AI\\Godset\\AIDA-M365\\src\\AIDA.M365.csproj"
+            "/workspaces/AIDA-M365/src/AIDA.M365.csproj": {
+              "projectPath": "/workspaces/AIDA-M365/src/AIDA.M365.csproj"
             }
           }
         }
@@ -5304,7 +5297,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "10.0.200"
     },
     "frameworks": {
       "net8.0": {
@@ -5358,12 +5351,22 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.25, 8.0.25]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[8.0.25, 8.0.25]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

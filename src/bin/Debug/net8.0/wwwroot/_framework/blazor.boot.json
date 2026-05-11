@@ -1,7 +1,15 @@
 {
   "mainAssemblyName": "AIDA.M365",
   "resources": {
+<<<<<<< HEAD
     "hash": "sha256-Gmm1u8DjJJb5kkR0+Vrfotumza/63NVPxDPouLbRNKU=",
+=======
+<<<<<<< HEAD
+    "hash": "sha256-/LsJA2lknZ3txznSx8flYcG4JaG9Ft+i4AOgaGuNHhM=",
+=======
+    "hash": "sha256-MRbXKJdADwSAKEnohnSLg0Bs5ii8MvjxFJbTmgzAGnI=",
+>>>>>>> 70c6415 (asdf)
+>>>>>>> 842a76f0213d23d44f0435517766b38b7a200411
     "jsModuleNative": {
       "dotnet.native.js": "sha256-A16ka545FHaB+QXjyJ4exXh7XpBAAIFnX8YkC4xAng8="
     },
@@ -232,10 +240,24 @@
       "mscorlib.wasm": "sha256-ovgR6YJeXMcsAhvGJVdyjhD5pU34EEAc0BGQYTUAyNk=",
       "netstandard.wasm": "sha256-90+pPOP/3NxK0buBFJlcvDw0r6Nk/i3+oM9dt2x+LPM=",
       "System.Private.CoreLib.wasm": "sha256-IXKG8p3ppN4zPjJOxht5wSXCcbFNPH6InVm7fsThBPI=",
+<<<<<<< HEAD
       "AIDA.M365.wasm": "sha256-AlykYsqzuGBqFYp0ktLHZMJn32b7z7dCr40uVnt8MZ0="
     },
     "pdb": {
       "AIDA.M365.pdb": "sha256-naFIMXJ+m3kuGngaPWMF16qnUBbhEHsVAo8k/RZOzqQ="
+=======
+<<<<<<< HEAD
+      "AIDA.M365.wasm": "sha256-LUsRZRnUW6gKMKdXG5tGW5mc6YMqIUmw1xKWea961Z8="
+    },
+    "pdb": {
+      "AIDA.M365.pdb": "sha256-c2pFuW+qTay639xNBZTItzldItEDRlAZCFiox+WmRdU="
+=======
+      "AIDA.M365.wasm": "sha256-KLOoNE2qDT8Y/WT9FZC1AR7Pf+Cme3W0RLmYDVANNjY="
+    },
+    "pdb": {
+      "AIDA.M365.pdb": "sha256-M8ZeFY0Z69UJGpiY5RFz2OX4HC3U/KC59/1W5Pm8NkE="
+>>>>>>> 70c6415 (asdf)
+>>>>>>> 842a76f0213d23d44f0435517766b38b7a200411
     }
   },
   "cacheBootResources": true,
