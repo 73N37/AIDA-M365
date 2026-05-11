@@ -60,6 +60,12 @@
     private async Task HandleItemUpdatedAsync(MudItemDropInfo<KanbanEventCard> dropInfo)
     {
         var card = dropInfo.Item;
+        if (card is null)
+        {
+            Logger.LogWarning("Received a drop update without an item.");
+            return;
+        }
+
         var destinationSection = Sections.FirstOrDefault(x => x.Key == dropInfo.DropzoneIdentifier);
 
         if (destinationSection is null)

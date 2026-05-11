@@ -13,7 +13,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AIDA.M365")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+049592ff22a952a42e5ffa7d7694cd53208b7e11")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4032fa372e9cc3a5cbd85aed4941aa8e93b6fbb3")]
+>>>>>>> 70c6415 (asdf)
 [assembly: System.Reflection.AssemblyProductAttribute("AIDA.M365")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AIDA.M365")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
