@@ -21,7 +21,13 @@ public class KanbanBoardTests : TestContext
         Services.AddMudServices();
         
         // Mock dependencies
-        var mockService = new Mock<IOutlookCalendarEventService>();
+        var mockService = new Mock<IEventCommandCenterService>();
+        mockService
+            .Setup(x => x.MoveCardAsync(It.IsAny<MoveCardRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(MoveCardResult.Success());
+        mockService
+            .Setup(x => x.SummarizeCardAsync(It.IsAny<KanbanEventCard>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(CardSummaryResult.Success("summary", ["action"]));
         Services.AddSingleton(mockService.Object);
         
         var mockLogger = new Mock<ILogger<KanbanBoard>>();

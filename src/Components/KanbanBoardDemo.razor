@@ -115,7 +115,13 @@
             new()
             {
                 GraphEventId = "demo-event-001",
+                DynamicsEntityId = "00000000-0000-0000-0000-000000000001",
+                DynamicsEntityLogicalName = "account",
+                MetadataId = Guid.NewGuid(),
                 Subject = "Client Kickoff",
+                BodyContent = "Review the implementation timeline, assign owners for launch activities, and confirm the customer success follow-up plan.",
+                ColorHex = "#1976d2",
+                Priority = "High",
                 SectionKey = "planned",
                 StartUtc = todayUtc.AddHours(9),
                 EndUtc = todayUtc.AddHours(10)
@@ -123,7 +129,10 @@
             new()
             {
                 GraphEventId = "demo-event-002",
+                MetadataId = Guid.NewGuid(),
                 Subject = "Roadmap Review",
+                BodyContent = "Discuss Q3 priorities, identify blocked dependencies, and prepare a decision log for the opportunity team.",
+                ColorHex = "#2e7d32",
                 SectionKey = "planned",
                 StartUtc = todayUtc.AddHours(10),
                 EndUtc = todayUtc.AddHours(11)
@@ -131,7 +140,12 @@
             new()
             {
                 GraphEventId = "demo-event-003",
+                DynamicsEntityId = "00000000-0000-0000-0000-000000000003",
+                DynamicsEntityLogicalName = "opportunity",
+                MetadataId = Guid.NewGuid(),
                 Subject = "Proposal Draft",
+                BodyContent = "Prepare the commercial proposal, validate assumptions with finance, and send the draft to the account owner.",
+                ColorHex = "#ed6c02",
                 SectionKey = "backlog",
                 StartUtc = todayUtc.AddDays(1).AddHours(8),
                 EndUtc = todayUtc.AddDays(1).AddHours(9)

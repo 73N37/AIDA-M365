@@ -3,46 +3,91 @@
 @using Microsoft.AspNetCore.Components
 @using Microsoft.Extensions.Logging
 @using MudBlazor
-@inject IOutlookCalendarEventService OutlookCalendarEventService
+@inject IEventCommandCenterService EventCommandCenterService
 @inject ILogger<KanbanBoard> Logger
 
-<MudDropContainer T="KanbanEventCard"
-                  Items="Cards"
-                  ItemsSelector="@((item, zoneKey) => item.SectionKey == zoneKey)"
-                  ItemUpdated="HandleItemUpdatedAsync"
-                  Class="d-flex flex-column gap-4">
-    <ChildContent>
-        <MudGrid>
-            @foreach (var sectionDef in Sections)
-            {
-                <MudItem xs="12" md="4">
-                    <MudPaper Class="pa-4" Elevation="1">
-                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mb-3">
-                            <MudText Typo="Typo.h6" Class="flex-grow-1">@sectionDef.Title</MudText>
-                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                           Size="Size.Small"
-                                           Color="Color.Error"
-                                           OnClick="() => DeleteSectionAsync(sectionDef)"
-                                           title="Delete this section" />
-                        </MudStack>
-                        <MudDropZone T="KanbanEventCard"
-                                     Identifier="@sectionDef.Key"
-                                     Class="mt-2 min-height-300" />
-                    </MudPaper>
-                </MudItem>
-            }
-        </MudGrid>
-    </ChildContent>
+<MudPaper Class="position-relative pa-0" Elevation="0">
+    <MudOverlay Visible="@_isBusy" DarkBackground="true" Absolute="true" ZIndex="10">
+        <MudStack AlignItems="AlignItems.Center" JustifyContent="Center" Spacing="2">
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+            <MudText Typo="Typo.body2">@_busyMessage</MudText>
+        </MudStack>
+    </MudOverlay>
 
-    <ItemRenderer Context="card">
-        <MudPaper Class="pa-3 mb-2" Outlined="true">
-            <MudText Typo="Typo.subtitle2">@card.Subject</MudText>
-            <MudText Typo="Typo.caption">
-                @card.StartUtc.ToLocalTime().ToString("g") - @card.EndUtc.ToLocalTime().ToString("g")
-            </MudText>
-        </MudPaper>
-    </ItemRenderer>
-</MudDropContainer>
+    @if (!string.IsNullOrWhiteSpace(_errorMessage))
+    {
+        <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">
+            @_errorMessage
+        </MudAlert>
+    }
+
+    <MudDropContainer T="KanbanEventCard"
+                      Items="Cards"
+                      ItemsSelector="@((item, zoneKey) => item.SectionKey == zoneKey)"
+                      ItemUpdated="HandleItemUpdatedAsync"
+                      Class="d-flex flex-column gap-4">
+        <ChildContent>
+            <MudGrid>
+                @foreach (var sectionDef in Sections)
+                {
+                    <MudItem xs="12" md="4">
+                        <MudPaper Class="pa-4" Elevation="1">
+                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mb-3">
+                                <MudText Typo="Typo.h6" Class="flex-grow-1">@sectionDef.Title</MudText>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                               Size="Size.Small"
+                                               Color="Color.Error"
+                                               OnClick="() => DeleteSectionAsync(sectionDef)"
+                                               title="Delete this section" />
+                            </MudStack>
+                            <MudDropZone T="KanbanEventCard"
+                                         Identifier="@sectionDef.Key"
+                                         Class="mt-2 min-height-300" />
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
+        </ChildContent>
+
+        <ItemRenderer Context="card">
+            <MudPaper Class="pa-3 mb-2" Outlined="true" Style="@GetCardStyle(card)">
+                <MudStack Spacing="1">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                        <MudText Typo="Typo.subtitle2" Class="flex-grow-1">@card.Subject</MudText>
+                        @if (card.IsLinkedToDynamics)
+                        {
+                            <MudChip Size="Size.Small" Color="Color.Info" Variant="Variant.Outlined">Dynamics</MudChip>
+                        }
+                    </MudStack>
+                    <MudText Typo="Typo.caption">
+                        @card.StartUtc.ToLocalTime().ToString("g") - @card.EndUtc.ToLocalTime().ToString("g")
+                    </MudText>
+                    @if (!string.IsNullOrWhiteSpace(card.SmartSummary))
+                    {
+                        <MudText Typo="Typo.body2">@card.SmartSummary</MudText>
+                    }
+                    @if (card.ActionItems.Count > 0)
+                    {
+                        <MudList Dense="true" Class="py-0">
+                            @foreach (var actionItem in card.ActionItems)
+                            {
+                                <MudListItem Dense="true">@actionItem</MudListItem>
+                            }
+                        </MudList>
+                    }
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Primary"
+                               Size="Size.Small"
+                               StartIcon="@Icons.Material.Filled.AutoAwesome"
+                               Disabled="@_isBusy"
+                               OnClick="@(() => SummarizeCardAsync(card))">
+                        Smart Summarize
+                    </MudButton>
+                </MudStack>
+            </MudPaper>
+        </ItemRenderer>
+    </MudDropContainer>
+</MudPaper>
 
 @code {
     [Parameter, EditorRequired]
@@ -57,9 +102,20 @@
     [Parameter]
     public EventCallback<KanbanSectionDefinition> SectionDeleted { get; set; }
 
+    private bool _isBusy;
+
+    private string _busyMessage = "Synchronizing...";
+
+    private string? _errorMessage;
+
     private async Task HandleItemUpdatedAsync(MudItemDropInfo<KanbanEventCard> dropInfo)
     {
         var card = dropInfo.Item;
+        if (card is null)
+        {
+            return;
+        }
+
         var destinationSection = Sections.FirstOrDefault(x => x.Key == dropInfo.DropzoneIdentifier);
 
         if (destinationSection is null)
@@ -77,12 +133,23 @@
         card.SectionKey = destinationSection.Key;
         card.StartUtc = newStartUtc;
         card.EndUtc = newEndUtc;
+        _isBusy = true;
+        _busyMessage = "Synchronizing Graph, Dynamics, and metadata...";
+        _errorMessage = null;
 
         try
         {
-            await OutlookCalendarEventService
-                .UpdateEventTimeAsync(card.GraphEventId, newStartUtc, newEndUtc)
-                .ConfigureAwait(false);
+            var result = await EventCommandCenterService.MoveCardAsync(
+                new MoveCardRequest(card, destinationSection.Key, newStartUtc, newEndUtc));
+
+            if (!result.Succeeded)
+            {
+                card.SectionKey = originalSectionKey;
+                card.StartUtc = originalStart;
+                card.EndUtc = originalEnd;
+                _errorMessage = result.ErrorMessage;
+                return;
+            }
 
             if (CardUpdated.HasDelegate)
             {
@@ -95,9 +162,13 @@
             card.SectionKey = originalSectionKey;
             card.StartUtc = originalStart;
             card.EndUtc = originalEnd;
+            _errorMessage = "The event could not be synchronized.";
 
             Logger.LogError(ex, "Failed to update event {EventId}", card.GraphEventId);
-            throw;
+        }
+        finally
+        {
+            _isBusy = false;
         }
     }
 
@@ -121,4 +192,43 @@
             await SectionDeleted.InvokeAsync(section);
         }
     }
+
+    private async Task SummarizeCardAsync(KanbanEventCard card)
+    {
+        _isBusy = true;
+        _busyMessage = "Generating action items...";
+        _errorMessage = null;
+
+        try
+        {
+            var result = await EventCommandCenterService.SummarizeCardAsync(card);
+            if (!result.Succeeded)
+            {
+                _errorMessage = result.ErrorMessage;
+                return;
+            }
+
+            card.SmartSummary = result.Summary;
+            card.ActionItems = result.ActionItems;
+
+            if (CardUpdated.HasDelegate)
+            {
+                await CardUpdated.InvokeAsync(card);
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = "Smart Summarize failed.";
+            Logger.LogError(ex, "Failed to summarize event {EventId}", card.GraphEventId);
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+
+    private static string? GetCardStyle(KanbanEventCard card) =>
+        string.IsNullOrWhiteSpace(card.ColorHex)
+            ? null
+            : $"border-left: 4px solid {card.ColorHex};";
 }

@@ -8,6 +8,7 @@ public static class DemoServiceCollectionExtensions
     public static IServiceCollection AddAidaKanbanDemoServices(this IServiceCollection services)
     {
         services.AddScoped<IOutlookCalendarEventService, DemoOutlookCalendarEventService>();
+        services.AddScoped<IEventCommandCenterService, DemoEventCommandCenterService>();
 
         return services;
     }
