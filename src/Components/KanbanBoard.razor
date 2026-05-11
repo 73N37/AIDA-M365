@@ -1,6 +1,7 @@
 @using AIDA.M365.Models
 @using AIDA.M365.Services
 @using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Logging
 @using MudBlazor
 @inject IOutlookCalendarEventService OutlookCalendarEventService
 @inject ILogger<KanbanBoard> Logger
@@ -12,13 +13,13 @@
                   Class="d-flex flex-column gap-4">
     <ChildContent>
         <MudGrid>
-            @foreach (var section in Sections)
+            @foreach (var sectionDef in Sections)
             {
                 <MudItem xs="12" md="4">
                     <MudPaper Class="pa-4" Elevation="1">
-                        <MudText Typo="Typo.h6">@section.Title</MudText>
+                        <MudText Typo="Typo.h6">@sectionDef.Title</MudText>
                         <MudDropZone T="KanbanEventCard"
-                                     Identifier="@section.Key"
+                                     Identifier="@sectionDef.Key"
                                      Class="mt-2 min-height-300" />
                     </MudPaper>
                 </MudItem>
