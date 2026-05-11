@@ -4,6 +4,8 @@ build_property.EnableSingleFileAnalyzer =
 build_property.EnableTrimAnalyzer = false
 build_property.IncludeAllContentForSelfExtract = 
 build_property.TargetFramework = net8.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v8.0
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = 
 build_property.ProjectTypeGuids = 
@@ -13,37 +15,37 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = browser
 build_property.RootNamespace = AIDA.M365
 build_property.RootNamespace = AIDA.M365
-build_property.ProjectDir = C:\Users\vase_\Desktop\AI\Godset\AIDA-M365\src\
+build_property.ProjectDir = /workspaces/AIDA-M365/src/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = false
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\vase_\Desktop\AI\Godset\AIDA-M365\src
+build_property.MSBuildProjectDirectory = /workspaces/AIDA-M365/src
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/vase_/Desktop/AI/Godset/AIDA-M365/src/App.razor]
+[/workspaces/AIDA-M365/src/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/vase_/Desktop/AI/Godset/AIDA-M365/src/Components/Index.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xJbmRleC5yYXpvcg==
+[/workspaces/AIDA-M365/src/Components/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9JbmRleC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/vase_/Desktop/AI/Godset/AIDA-M365/src/Components/KanbanBoard.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xLYW5iYW5Cb2FyZC5yYXpvcg==
+[/workspaces/AIDA-M365/src/Components/KanbanBoard.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9LYW5iYW5Cb2FyZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/vase_/Desktop/AI/Godset/AIDA-M365/src/Components/KanbanBoardDemo.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xLYW5iYW5Cb2FyZERlbW8ucmF6b3I=
+[/workspaces/AIDA-M365/src/Components/KanbanBoardDemo.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9LYW5iYW5Cb2FyZERlbW8ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/vase_/Desktop/AI/Godset/AIDA-M365/src/Components/MainLayout.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xNYWluTGF5b3V0LnJhem9y
+[/workspaces/AIDA-M365/src/Components/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9NYWluTGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/vase_/Desktop/AI/Godset/AIDA-M365/src/_Imports.razor]
+[/workspaces/AIDA-M365/src/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
