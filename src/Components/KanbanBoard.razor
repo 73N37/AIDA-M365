@@ -16,7 +16,14 @@
             {
                 <MudItem xs="12" md="4">
                     <MudPaper Class="pa-4" Elevation="1">
-                        <MudText Typo="Typo.h6">@section.Title</MudText>
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mb-3">
+                            <MudText Typo="Typo.h6" Class="flex-grow-1">@section.Title</MudText>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Size="Size.Small"
+                                           Color="Color.Error"
+                                           OnClick="() => DeleteSectionAsync(section)"
+                                           title="Delete this section" />
+                        </MudStack>
                         <MudDropZone T="KanbanEventCard"
                                      Identifier="@section.Key"
                                      Class="mt-2 min-height-300" />
@@ -45,6 +52,9 @@
 
     [Parameter]
     public EventCallback<KanbanEventCard> CardUpdated { get; set; }
+
+    [Parameter]
+    public EventCallback<KanbanSectionDefinition> SectionDeleted { get; set; }
 
     private async Task HandleItemUpdatedAsync(MudItemDropInfo<KanbanEventCard> dropInfo)
     {
@@ -101,5 +111,13 @@
             .AddMinutes(destinationSection.StartMinuteUtc);
 
         return (newStartUtc, newStartUtc.Add(duration));
+    }
+
+    private async Task DeleteSectionAsync(KanbanSectionDefinition section)
+    {
+        if (SectionDeleted.HasDelegate)
+        {
+            await SectionDeleted.InvokeAsync(section);
+        }
     }
 }

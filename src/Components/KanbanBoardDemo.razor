@@ -5,7 +5,12 @@
 
 <MudContainer MaxWidth="MaxWidth.False" Class="pa-6">
     <MudStack Spacing="2">
-        <MudText Typo="Typo.h4">Kanban Board Demo</MudText>
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.h4">Kanban Board Demo</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCreateSectionDialogAsync">
+                Add Section
+            </MudButton>
+        </MudStack>
         <MudText Typo="Typo.body2">
             Drag cards between columns. The board component recalculates Start/End and invokes the Graph-backed update service.
         </MudText>
@@ -17,9 +22,49 @@
             </MudAlert>
         }
 
-        <KanbanBoard Sections="_sections" Cards="_cards" CardUpdated="OnCardUpdatedAsync" />
+        <KanbanBoard Sections="_sections" Cards="_cards" CardUpdated="OnCardUpdatedAsync" SectionDeleted="OnSectionDeletedAsync" />
     </MudStack>
 </MudContainer>
+
+<MudDialog @bind-IsVisible="_showCreateSectionDialog" Options="new DialogOptions { FullWidth = true, MaxWidth = MaxWidth.Small }">
+    <TitleContent>
+        <MudText Typo="Typo.h6">Create New Section</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudTextField @bind-Value="_newSectionTitle"
+                          Label="Section Title"
+                          Placeholder="e.g., Blocked, On Hold"
+                          FullWidth="true"
+                          Variant="Variant.Outlined" />
+            
+            <MudNumericField @bind-Value="_dayOffsetFromToday"
+                             Label="Day Offset (0 = today, 1 = tomorrow, -1 = yesterday)"
+                             Min="-7"
+                             Max="7"
+                             FullWidth="true"
+                             Variant="Variant.Outlined" />
+            
+            <MudNumericField @bind-Value="_startHourUtc"
+                             Label="Start Hour (UTC 0-23)"
+                             Min="0"
+                             Max="23"
+                             FullWidth="true"
+                             Variant="Variant.Outlined" />
+            
+            <MudNumericField @bind-Value="_startMinuteUtc"
+                             Label="Start Minute (0-59)"
+                             Min="0"
+                             Max="59"
+                             FullWidth="true"
+                             Variant="Variant.Outlined" />
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => _showCreateSectionDialog = false">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateSectionAsync">Create</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @code {
     private readonly List<KanbanSectionDefinition> _sections =
@@ -54,6 +99,13 @@
 
     private string? _lastUpdatedMessage;
 
+    // Dialog state for creating new sections
+    private bool _showCreateSectionDialog;
+    private string? _newSectionTitle;
+    private int _dayOffsetFromToday;
+    private int _startHourUtc;
+    private int _startMinuteUtc;
+
     protected override void OnInitialized()
     {
         var todayUtc = DateTimeOffset.UtcNow.Date;
@@ -87,10 +139,72 @@
         ]);
     }
 
+    private Task OpenCreateSectionDialogAsync()
+    {
+        // Reset form
+        _newSectionTitle = null;
+        _dayOffsetFromToday = 0;
+        _startHourUtc = 9;
+        _startMinuteUtc = 0;
+        
+        _showCreateSectionDialog = true;
+        return Task.CompletedTask;
+    }
+
+    private Task CreateSectionAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_newSectionTitle))
+        {
+            return Task.CompletedTask;
+        }
+
+        // Generate a unique key from the title
+        var key = _newSectionTitle.ToLowerInvariant().Replace(" ", "-");
+        
+        // Ensure uniqueness by appending a timestamp if needed
+        if (_sections.Any(s => s.Key == key))
+        {
+            key = $"{key}-{DateTime.Now.Ticks}";
+        }
+
+        var newSection = new KanbanSectionDefinition
+        {
+            Key = key,
+            Title = $"{_newSectionTitle} (Day: {_dayOffsetFromToday:+0;-#}, {_startHourUtc:D2}:{_startMinuteUtc:D2} UTC)",
+            DayOffsetFromTodayUtc = _dayOffsetFromToday,
+            StartHourUtc = _startHourUtc,
+            StartMinuteUtc = _startMinuteUtc
+        };
+
+        _sections.Add(newSection);
+        _lastUpdatedMessage = $"Created new section: {newSection.Title}";
+        _showCreateSectionDialog = false;
+        StateHasChanged();
+
+        return Task.CompletedTask;
+    }
+
     private Task OnCardUpdatedAsync(KanbanEventCard card)
     {
         _lastUpdatedMessage =
             $"Updated {card.Subject} ({card.GraphEventId}) -> {card.SectionKey} | {card.StartUtc:u} to {card.EndUtc:u}";
+
+        return Task.CompletedTask;
+    }
+
+    private Task OnSectionDeletedAsync(KanbanSectionDefinition section)
+    {
+        // Remove any cards in the deleted section
+        var cardsInDeletedSection = _cards.Where(c => c.SectionKey == section.Key).ToList();
+        foreach (var card in cardsInDeletedSection)
+        {
+            _cards.Remove(card);
+        }
+
+        // Remove the section
+        _sections.Remove(section);
+        _lastUpdatedMessage = $"Deleted section: {section.Title}";
+        StateHasChanged();
 
         return Task.CompletedTask;
     }
