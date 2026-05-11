@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AIDA.M365.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4c9c44415be6e0aa37a73fff54d5f6d3c9c00d5b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+30656ba4e3272d5d72ebbc9295b4111f0e99bcc4")]
 [assembly: System.Reflection.AssemblyProductAttribute("AIDA.M365.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AIDA.M365.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

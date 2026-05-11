@@ -17,18 +17,14 @@
             {
                 <MudItem xs="12" md="4">
                     <MudPaper Class="pa-4" Elevation="1">
-<<<<<<< HEAD
                         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mb-3">
-                            <MudText Typo="Typo.h6" Class="flex-grow-1">@section.Title</MudText>
+                            <MudText Typo="Typo.h6" Class="flex-grow-1">@sectionDef.Title</MudText>
                             <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                            Size="Size.Small"
                                            Color="Color.Error"
-                                           OnClick="() => DeleteSectionAsync(section)"
+                                           OnClick="() => DeleteSectionAsync(sectionDef)"
                                            title="Delete this section" />
                         </MudStack>
-=======
-                        <MudText Typo="Typo.h6">@sectionDef.Title</MudText>
->>>>>>> refs/remotes/origin/main
                         <MudDropZone T="KanbanEventCard"
                                      Identifier="@sectionDef.Key"
                                      Class="mt-2 min-height-300" />
