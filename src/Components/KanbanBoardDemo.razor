@@ -1,0 +1,97 @@
+@page "/kanban-demo"
+@using AIDA.M365.Models
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-6">
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.h4">Kanban Board Demo</MudText>
+        <MudText Typo="Typo.body2">
+            Drag cards between columns. The board component recalculates Start/End and invokes the Graph-backed update service.
+        </MudText>
+
+        @if (!string.IsNullOrWhiteSpace(_lastUpdatedMessage))
+        {
+            <MudAlert Severity="Severity.Success" Dense="true" Variant="Variant.Filled">
+                @_lastUpdatedMessage
+            </MudAlert>
+        }
+
+        <KanbanBoard Sections="_sections" Cards="_cards" CardUpdated="OnCardUpdatedAsync" />
+    </MudStack>
+</MudContainer>
+
+@code {
+    private readonly List<KanbanSectionDefinition> _sections =
+    [
+        new()
+        {
+            Key = "backlog",
+            Title = "Backlog (Tomorrow 08:00 UTC)",
+            DayOffsetFromTodayUtc = 1,
+            StartHourUtc = 8,
+            StartMinuteUtc = 0
+        },
+        new()
+        {
+            Key = "planned",
+            Title = "Planned (Today 09:00 UTC)",
+            DayOffsetFromTodayUtc = 0,
+            StartHourUtc = 9,
+            StartMinuteUtc = 0
+        },
+        new()
+        {
+            Key = "in-progress",
+            Title = "In Progress (Today 13:00 UTC)",
+            DayOffsetFromTodayUtc = 0,
+            StartHourUtc = 13,
+            StartMinuteUtc = 0
+        }
+    ];
+
+    private readonly List<KanbanEventCard> _cards = [];
+
+    private string? _lastUpdatedMessage;
+
+    protected override void OnInitialized()
+    {
+        var todayUtc = DateTimeOffset.UtcNow.Date;
+
+        _cards.AddRange(
+        [
+            new()
+            {
+                GraphEventId = "demo-event-001",
+                Subject = "Client Kickoff",
+                SectionKey = "planned",
+                StartUtc = todayUtc.AddHours(9),
+                EndUtc = todayUtc.AddHours(10)
+            },
+            new()
+            {
+                GraphEventId = "demo-event-002",
+                Subject = "Roadmap Review",
+                SectionKey = "planned",
+                StartUtc = todayUtc.AddHours(10),
+                EndUtc = todayUtc.AddHours(11)
+            },
+            new()
+            {
+                GraphEventId = "demo-event-003",
+                Subject = "Proposal Draft",
+                SectionKey = "backlog",
+                StartUtc = todayUtc.AddDays(1).AddHours(8),
+                EndUtc = todayUtc.AddDays(1).AddHours(9)
+            }
+        ]);
+    }
+
+    private Task OnCardUpdatedAsync(KanbanEventCard card)
+    {
+        _lastUpdatedMessage =
+            $"Updated {card.Subject} ({card.GraphEventId}) -> {card.SectionKey} | {card.StartUtc:u} to {card.EndUtc:u}";
+
+        return Task.CompletedTask;
+    }
+}

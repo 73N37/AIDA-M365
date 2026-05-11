@@ -1,0 +1,105 @@
+@using AIDA.M365.Models
+@using AIDA.M365.Services
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+@inject IOutlookCalendarEventService OutlookCalendarEventService
+@inject ILogger<KanbanBoard> Logger
+
+<MudDropContainer T="KanbanEventCard"
+                  Items="Cards"
+                  ItemsSelector="@((item, zoneKey) => item.SectionKey == zoneKey)"
+                  ItemUpdated="HandleItemUpdatedAsync"
+                  Class="d-flex flex-column gap-4">
+    <ChildContent>
+        <MudGrid>
+            @foreach (var section in Sections)
+            {
+                <MudItem xs="12" md="4">
+                    <MudPaper Class="pa-4" Elevation="1">
+                        <MudText Typo="Typo.h6">@section.Title</MudText>
+                        <MudDropZone T="KanbanEventCard"
+                                     Identifier="@section.Key"
+                                     Class="mt-2 min-height-300" />
+                    </MudPaper>
+                </MudItem>
+            }
+        </MudGrid>
+    </ChildContent>
+
+    <ItemRenderer Context="card">
+        <MudPaper Class="pa-3 mb-2" Outlined="true">
+            <MudText Typo="Typo.subtitle2">@card.Subject</MudText>
+            <MudText Typo="Typo.caption">
+                @card.StartUtc.ToLocalTime().ToString("g") - @card.EndUtc.ToLocalTime().ToString("g")
+            </MudText>
+        </MudPaper>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    [Parameter, EditorRequired]
+    public required IList<KanbanSectionDefinition> Sections { get; set; }
+
+    [Parameter, EditorRequired]
+    public required IList<KanbanEventCard> Cards { get; set; }
+
+    [Parameter]
+    public EventCallback<KanbanEventCard> CardUpdated { get; set; }
+
+    private async Task HandleItemUpdatedAsync(MudItemDropInfo<KanbanEventCard> dropInfo)
+    {
+        var card = dropInfo.Item;
+        var destinationSection = Sections.FirstOrDefault(x => x.Key == dropInfo.DropzoneIdentifier);
+
+        if (destinationSection is null)
+        {
+            Logger.LogWarning("Unknown drop zone identifier: {DropzoneIdentifier}", dropInfo.DropzoneIdentifier);
+            return;
+        }
+
+        var originalSectionKey = card.SectionKey;
+        var originalStart = card.StartUtc;
+        var originalEnd = card.EndUtc;
+
+        var (newStartUtc, newEndUtc) = RecalculateTimes(card, destinationSection);
+
+        card.SectionKey = destinationSection.Key;
+        card.StartUtc = newStartUtc;
+        card.EndUtc = newEndUtc;
+
+        try
+        {
+            await OutlookCalendarEventService
+                .UpdateEventTimeAsync(card.GraphEventId, newStartUtc, newEndUtc)
+                .ConfigureAwait(false);
+
+            if (CardUpdated.HasDelegate)
+            {
+                await CardUpdated.InvokeAsync(card);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Roll back local state if Graph update fails.
+            card.SectionKey = originalSectionKey;
+            card.StartUtc = originalStart;
+            card.EndUtc = originalEnd;
+
+            Logger.LogError(ex, "Failed to update event {EventId}", card.GraphEventId);
+            throw;
+        }
+    }
+
+    private static (DateTimeOffset StartUtc, DateTimeOffset EndUtc) RecalculateTimes(
+        KanbanEventCard card,
+        KanbanSectionDefinition destinationSection)
+    {
+        var duration = card.Duration;
+        var baseDayUtc = DateTimeOffset.UtcNow.Date.AddDays(destinationSection.DayOffsetFromTodayUtc);
+        var newStartUtc = baseDayUtc
+            .AddHours(destinationSection.StartHourUtc)
+            .AddMinutes(destinationSection.StartMinuteUtc);
+
+        return (newStartUtc, newStartUtc.Add(duration));
+    }
+}
